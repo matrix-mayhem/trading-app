@@ -1,4 +1,3 @@
-from kiteconnect import KiteConnect
 from dotenv import load_dotenv
 import asyncio
 import os
@@ -28,7 +27,7 @@ async def replay_historical(symbol: str, token: str):
     from_date = datetime.datetime(2024, 6, 25, 9, 15)
     to_date = datetime.datetime(2024, 6, 25, 15, 30)
 
-    data = kite.historical_data(token, from_date, to_date, interval="5minute")
+    data = kite.historical_data(token, from_date, to_date, interval="3minute")
 
     for candle in data:
         price = candle['close']

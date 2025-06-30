@@ -1,11 +1,32 @@
 from fastapi import FastAPI, HTTPException
-from risk import calculate_and_store_risk
-from db import SessionLocal, RiskMetrics
+from app.risk import calculate_and_store_risk
+from app.db import SessionLocal, RiskMetrics
 from sqlalchemy import select
-from db import MarketData
-from snowflake_etl import export_price_data
+from app.db import MarketData
+from app.snowflake_etl import export_price_data
+from aiohttp import web
+from app.moving_average import fetch_moving_average
 
 app = FastAPI()
+
+routes = web.RouteTableDef()
+
+@routes.get("/health")
+async def health_check(request):
+    return web.json_response({"status": "OK"})
+
+@routes.get("/moving_average/{symbol}")
+async def get_moving_avg(request):
+    symbol = request.match_info['symbol']
+    window = int(request.query.get('window', 5))
+
+    data = await fetch_moving_average(symbol, window)
+    return web.json_response({"symbol": symbol, "moving_average": data})
+
+def create_app():
+    app = web.Application()
+    app.add_routes(routes)
+    return app
 
 @app.get("/price/{symbol}")
 async def get_latest_price(symbol: str):
@@ -55,3 +76,4 @@ async def get_risk_metrics(symbol: str):
             "timestamp": latest.timestamp
         }
     return {"message": "No risk metrics found"}
+

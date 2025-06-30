@@ -1,6 +1,6 @@
 import pandas as pd
 import pandas_ta as ta
-from db import SessionLocal, MarketData, RiskMetrics
+from app.db import SessionLocal, MarketData, RiskMetrics
 from sqlalchemy import select
 
 async def calculate_and_store_risk(symbol):

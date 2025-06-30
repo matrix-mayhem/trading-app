@@ -12,7 +12,7 @@ Base = declarative_base()
 class MarketData(Base):
     __tablename__ = "market_data"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True, index=True, autoincrement="auto")
     symbol = Column(String(20))
     price = Column(Numeric)
     timestamp = Column(DateTime(timezone=True), server_default=func.now())
